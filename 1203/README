@@ -1,0 +1,215 @@
+Dear Jianliang,
+ 
+MWakeLock->acquire() takes 2174 millis, please help to check.
+Thanks a lot!
+ 
+ 
+void KeyguardService::pokeWakelock(int32_t holdMs) {
+    GLOGENTRY();
+    GLOGD("pokeWakelock(%d)", holdMs);
+    mWakeLock->acquire();
+    mHandler->removeMessages(TIMEOUT);
+    mWakelockSequence++;
+    sp<Message> msg = mHandler->obtainMessage(TIMEOUT, mWakelockSequence, 0);
+    mHandler->sendMessageDelayed(msg, holdMs);
+}
+ 
+// log
+12-03 11:29:19.926 D/keyguardview(  737): TID:740     Enter dispatchTouchEvent
+ 
+12-03 11:29:19.926 D/keyguard(  736): TID:991     Enter pokeWakelock
+ 
+12-03 11:29:19.926 D/keyguard(  736): TID:991     Enter pokeWakelock
+ 
+12-03 11:29:19.926 D/keyguard(  736): TID:991     pokeWakelock(15000)
+ 
+12-03 11:29:19.956 I/PowerManagerService(  736): TID:825         Set LcdLight brightness: 111
+ 
+12-03 11:29:19.966 I/PowerManagerService(  736): TID:825         animateInternal currentValue=111 duration=960 endValue=123 startValue=95
+ 
+12-03 11:29:19.966 I/looper_mq(  736): TID:825   removeMessages what=10
+ 
+12-03 11:29:19.976 I/PowerManagerService(  736): TID:825         Set LcdLight brightness: 112
+ 
+12-03 11:29:19.976 I/Integer (  736):      #05  pc 0115d20a  /system/lib/libandroidnio.so (gaia::BatteryStatsImpl::getNetworkStatsDetailGroupedByUid()+149)
+ 
+12-03 11:29:19.986 I/PowerManagerService(  736): TID:825         animateInternal currentValue=112 duration=960 endValue=123 startValue=95
+ 
+12-03 11:29:19.986 I/looper_mq(  736): TID:825   removeMessages what=10
+ 
+12-03 11:29:20.027 I/PowerManagerService(  736): TID:825         Set LcdLight brightness: 113
+ 
+12-03 11:29:20.037 I/PowerManagerService(  736): TID:825         animateInternal currentValue=113 duration=960 endValue=123 startValue=95
+ 
+12-03 11:29:20.037 I/looper_mq(  736): TID:825   removeMessages what=10
+12-03 11:29:20.847 I/Integer (  736): TID:822         Call stack:
+ 
+12-03 11:29:20.907 I/Integer (  736):      #00  pc 000c1a88  /system/lib/libutilscos.so (gaia::Integer::parse(android::sp<gaia::String> const&, unsigned int, int, bool, int&)+463)
+ 
+12-03 11:29:20.968 I/Integer (  736):      #01  pc 000c2042  /system/lib/libutilscos.so (gaia::Integer::parse(android::sp<gaia::String> const&, unsigned int, int, bool)+13)
+ 
+12-03 11:29:21.028 I/Integer (  736):    #02  pc 000c24fe  /system/lib/libutilscos.so (gaia::Integer::parseInt(android::sp<gaia::String> const&, int)+1201)
+ 
+12-03 11:29:21.088 I/Integer (  736):      #03  pc 058e7cb2  /system/lib/libgaiaframework.so (gaia::NetworkStatsFactory::readNetworkStatsDetail(int)+713)
+ 
+12-03 11:29:21.158 I/Integer (  736):      #04  pc 058e7ea4  /system/lib/libgaiaframework.so (gaia::NetworkStatsFactory::readNetworkStatsDetail()+7)
+ 
+12-03 11:29:21.218 I/Integer (  736):      #05  pc 0115d20a  /system/lib/libandroidnio.so (gaia::BatteryStatsImpl::getNetworkStatsDetailGroupedByUid()+149)
+ 
+12-03 11:29:21.278 I/Integer (  736):      #06  pc 0115d47e  /system/lib/libandroidnio.so (gaia::BatteryStatsImpl::Uid::computeCurrentTcpBytesReceived()+93)
+ 
+12-03 11:29:21.308 W/wms_impl(  736): TID:831 Timeout waiting for drawn: 0x4d546820
+ 
+12-03 11:29:21.338 I/Integer (  736):      #07  pc 01162448  /system/lib/libandroidnio.so (gaia::BatteryStatsImpl::Uid::writeToParcelLocked(android::Parcel*, long long)+341)
+ 
+12-03 11:29:21.398 I/Integer (  736):      #08  pc 011644f0  /system/lib/libandroidnio.so (gaia::BatteryStatsImpl::writeToParcelLocked(android::Parcel*, bool, int)+859)
+ 
+12-03 11:29:21.458 I/Integer (  736):      #09  pc 01149650  /system/lib/libandroidnio.so (gaia::BatteryStatsService::getStatistics()+227)
+ 
+12-03 11:29:21.468 D/overlay (  234): FROM_STATE = OV_BYPASS_3_LAYER TO_STATE = OV_CLOSED
+ 
+12-03 11:29:21.518 I/Integer (  736):      #10  pc 01149562  /system/lib/libandroidnio.so (virtual thunk to gaia::BatteryStatsService::getStatistics()+13)
+ 
+12-03 11:29:21.538 D/AWOX    (12143): I 11:29:21:541|4d14bd68|IPMONITOR  Looking for changes
+ 
+12-03 11:29:21.588 I/Integer (  736):      #11  pc 058fc3a8  /system/lib/libgaiaframework.so (gaia::BnBatteryStats::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+483)
+ 
+12-03 11:29:21.648 I/Integer (  736):      #12  pc 000f4376  /system/lib/libutilscos.so (android::BBinder::transact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+57)
+ 
+12-03 11:29:21.708 I/Integer (  736):      #13  pc 000f9244  /system/lib/libutilscos.so (android::IPCThreadState::executeCommand(int)+519)
+ 
+12-03 11:29:21.778 I/Integer (  736):      #14  pc 000f96c2  /system/lib/libutilscos.so (android::IPCThreadState::joinThreadPool(bool)+193)
+ 
+12-03 11:29:21.838 I/Integer (  736):      #15  pc 00102c34  /system/lib/libutilscos.so
+ 
+12-03 11:29:21.899 I/Integer (  736):      #16  pc 000a73fc  /system/lib/libutilscos.so (android::Thread::_threadLoop(void*)+111)
+ 
+12-03 11:29:21.969 I/Integer (  736):      #17  pc 000a6e88  /system/lib/libutilscos.so
+ 
+12-03 11:29:22.029 I/Integer (  736):      #18  pc 000139c8  /system/lib/libc.so (__thread_entry+48)
+ 
+12-03 11:29:22.099 I/Integer (  736):      #19  pc 00013560  /system/lib/libc.so (pthread_create+172)
+ 
+12-03 11:29:22.099 I/InputDispatcher(  736): Window 'Window{5a7d84f8 title = gaia::GaiaWallpaperEngine, paused=false}' spent 2173.9ms processing the last input event: MotionEvent(deviceId=8, source=0x00001002, action=0, flags=0x00000000, metaState=0x00000000, buttonState=0x00000000, edgeFlags=0x00000000, xPrecision=1.5, yPrecision=1.4, displayId=0, pointers=[0: (726.5, 1821.2)]), policyFlags=0x42000000
+ 
+12-03 11:29:22.099 D/InputDispatcher(  736): doDispatchCycleFinishedLockedInterruptible MotionEvent - eventTime=101988644722000, deviceId=8, action=0x0, seq=132449
+ 
+12-03 11:29:22.099 D/InputDispatcher(  736): Waiting for application to become ready for input: Window{4d546820 title = Keyguard, paused=false}.  Reason: Waiting because the touched window has not finished processing the input events that were previously delivered to it.
+ 
+12-03 11:29:22.099 I/power   (  736): TID:991         nativeSetPowerState ScreenOn:true->true ScreenBright:true->true
+ 
+12-03 11:29:22.109 I/looper_mq(  736): TID:991   removeMessages what=1    // mHandler->removeMessages(TIMEOUT);
+ 
+12-03 11:29:22.109 D/keyguard(  736): TID:991     Leave pokeWakelock (takes 2174 millis)
+ 
+12-03 11:29:22.109 D/keyguard(  736): TID:991     Leave pokeWakelock (takes 2174 millis)
+ 
+12-03 11:29:22.109 I/DragLayer(  737): TID:740    DragLayer::dispatchTouchEvent++
+ 
+12-03 11:29:22.109 I/DragController(  737): TID:740     DragController::handleTouchEvent++
+ 
+12-03 11:29:22.109 I/TouchFilter(  737): TID:740   TouchFilter::dispatchTouchEvent, action = 0
+ 
+12-03 11:29:22.109 I/TouchFilter(  737): TID:740   TouchFilter::sendTouchEventToListener++
+ 
+12-03 11:29:22.109 I/TouchFilter(  737): TID:740   TouchFilter::sendTouchEventToListener-- 2
+ 
+12-03 11:29:22.109 I/DragController(  737): TID:740     MyTouchListener::onTouchEvent, action = 0, x= 726, y = 1821
+ 
+12-03 11:29:22.109 I/HtcLockScreen(  737): TID:740     DragController : onTouchEvent(ACTION_DOWN): x = 726, y = 1821
+ 
+12-03 11:29:22.109 I/DragController(  737): TID:740     MyTouchListener::onTouchEvent--, action = 0, x= 726, y = 1821
+ 
+12-03 11:29:22.109 I/DragController(  737): TID:740     DragController::handleTouchEvent--
+ 
+12-03 11:29:22.109 I/DragLayer(  737): TID:740    DragLayer::dispatchTouchEvent--
+ 
+12-03 11:29:22.109 I/HtcLockScreen(  737): TID:740     [DraggableView]:  : dispatchTouchEvent action:0
+ 
+12-03 11:29:22.109 I/HtcLockScreen(  737): TID:740     [DraggableView]:  : onTouchEvent action:0
+ 
+12-03 11:29:22.109 I/HtcLockScreen(  737): TID:740     [DraggableView]:  : beginDrag mTouched:true mTouchListener:false
+ 
+12-03 11:29:22.109 I/HtcLockScreen(  737): TID:740     WorkspaceCtrl : createDragBitmap
+ 
+12-03 11:29:22.109 I/HtcLockScreen(  737): TID:740     WorkspaceCtrl : createDragBitmap consumption: 1 ms.
+ 
+12-03 11:29:22.109 I/HtcLockScreen(  737): TID:740     DragController : setDragState state: -1
+ 
+12-03 11:29:22.109 I/DragView(  737): TID:740     DragView::DragView() ++ (0x4f6bded8)
+ 
+12-03 11:29:22.109 I/DragView(  737): TID:740     DragView(): dragType =3
+ 
+12-03 11:29:22.109 I/BothHandler(  737): TID:740         new BothHandler UI 0x4f41d158
+ 
+12-03 11:29:22.109 I/BothHandler(  737): TID:740         new BothHandler BG DragView::BGHandler 0x4f1424c0
+ 
+12-03 11:29:22.109 I/DragView(  737): TID:740     show mOriginalViewX:635 mOriginalViewY:1744 moveX:0 moveY:0
+ 
+12-03 11:29:22.109 W/WidgetControllerProxy(  737): TID:740      parent is NULL
+ 
+12-03 11:29:22.109 W/widget_controller_stub(  737): TID:740     controller returned by invalidateChildInParent is NULL
+ 
+12-03 11:29:22.109 D/keyguardview(  737): TID:740     Leave dispatchTouchEvent (takes 2180 millis)
+ 
+// normal situation
+12-03 11:29:22.119 D/keyguardview(  737): TID:740     Enter dispatchTouchEvent
+ 
+12-03 11:29:22.119 D/keyguardview(  737): TID:740     Enter shouldEventKeepScreenOn
+ 
+12-03 11:29:22.119 D/keyguardview(  737): TID:740     Leave shouldEventKeepScreenOn (takes 0 millis)
+ 
+12-03 11:29:22.119 D/keyguardview(  737): TID:740     shouldEventKeepScreenOn(event) = true
+ 
+12-03 11:29:22.119 D/keyguard(  736): TID:27737         Enter pokeWakelock
+ 
+12-03 11:29:22.119 D/keyguard(  736): TID:27737         Enter pokeWakelock
+ 
+12-03 11:29:22.119 D/keyguard(  736): TID:27737         pokeWakelock(15000)
+ 
+12-03 11:29:22.119 I/PowerManagerService(  736): TID:27737    setPowerState: mPowerState=0x3 newState=0x3 noChangeLights=false reason=3 force=false mProximitySensorActive=false mBootCompleted=true mUseSoftwareAutoBrightness=true
+ 
+12-03 11:29:22.119 W/PowerManagerService(  736): TID:27737 mProximityWakeLockCount=0
+ 
+12-03 11:29:22.119 W/PowerManagerService(  736): TID:27737 mPowerReason=2 reason=3
+ 
+12-03 11:29:22.119 I/power   (  736): TID:27737    nativeSetPowerState ScreenOn:true->true ScreenBright:true->true
+ 
+12-03 11:29:22.119 I/looper_mq(  736): TID:27737        removeMessages what=1
+ 
+12-03 11:29:22.119 D/keyguard(  736): TID:27737         Leave pokeWakelock (takes 0 millis)
+ 
+12-03 11:29:22.119 D/keyguard(  736): TID:27737         Leave pokeWakelock (takes 0 millis)
+ 
+12-03 11:29:22.119 I/DragLayer(  737): TID:740    DragLayer::dispatchTouchEvent++
+ 
+12-03 11:29:22.119 I/DragController(  737): TID:740     DragController::handleTouchEvent++
+ 
+12-03 11:29:22.119 I/TouchFilter(  737): TID:740   TouchFilter::dispatchTouchEvent, action = 2
+ 
+12-03 11:29:22.119 I/TouchFilter(  737): TID:740   TouchFilter::sendTouchEventToListener++
+ 
+12-03 11:29:22.119 I/TouchFilter(  737): TID:740   TouchFilter::sendTouchEventToListener-- 2
+ 
+12-03 11:29:22.119 I/DragController(  737): TID:740     MyTouchListener::onTouchEvent, action = 2, x= 725, y = 1818
+ 
+12-03 11:29:22.119 I/DragController(  737): TID:740     DragController::handleMoveEvent, x = 725, y = 1818
+ 
+12-03 11:29:22.119 I/DragController(  737): TID:740     DragController::handleMoveEvent, mClicking= 1, isClicking = 1
+ 
+12-03 11:29:22.119 I/DragController(  737): TID:740     DragController::handleMoveEvent--, x = 725, y = 1818
+ 
+12-03 11:29:22.119 I/DragController(  737): TID:740     MyTouchListener::onTouchEvent--, action = 2, x= 725, y = 1818
+ 
+12-03 11:29:22.119 I/DragController(  737): TID:740     DragController::handleTouchEvent--
+ 
+12-03 11:29:22.119 I/DragLayer(  737): TID:740    DragLayer::dispatchTouchEvent--
+ 
+12-03 11:29:22.129 I/HtcLockScreen(  737): TID:740     [DraggableView]:  : dispatchTouchEvent action:2
+ 
+12-03 11:29:22.129 I/HtcLockScreen(  737): TID:740     [DraggableView]:  : onTouchEvent action:2
+ 
+12-03 11:29:22.129 D/keyguardview(  737): TID:740     Leave dispatchTouchEvent (takes 2 millis)
+ 
+Best Regards,
+Aaron
